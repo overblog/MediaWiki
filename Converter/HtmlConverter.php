@@ -48,10 +48,35 @@ class HtmlConverter
         // Create objet
         $object = new Document();
 
+        // Clean useless tags
+        $text = self::stripTags($text);
+
         // Place line in structure
         $object->addChildrens(self::createStructure($text));
 
         return $object;
+    }
+
+    /**
+     * Remove useless Tags
+     * @param type $text
+     * @return type
+     */
+    private static function stripTags($text)
+    {
+        $list = array_merge(
+            array_keys(self::$replaceTags),
+            array_keys(self::$detectLeaf)
+        );
+
+        // Add missing tags
+        $list[] = 'a';
+        $list[] = 'br';
+
+        $list = implode('>,<', $list);
+        $list = preg_replace('#(.+)#', '<$1>', $list);
+
+        return strip_tags($text, $list);
     }
 
     /**

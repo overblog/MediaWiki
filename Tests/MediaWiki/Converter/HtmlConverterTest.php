@@ -33,6 +33,28 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
             );
     }
 
+    public function testLinkWithForbiddenTag()
+    {
+        $mw = HtmlConverter::from(
+                'Geek or <blink>Nerd</blink> @Apple Store <a href="' .
+                'http://instagr.am/p/JrzXrMqUln/">' .
+                'http://instagr.am/p/JrzXrMqUln/</a>');
+
+        $this->assertInstanceOf(
+                'Overblog\MediaWiki\Converter\Document', $mw);
+
+        $this->assertEquals(
+                $mw->asJson(),
+                '{"type":"document","children":[{"type":"paragraph",' .
+                '"content":{"text":"Geek or Nerd @Apple Store ' .
+                'http:\/\/instagr.am\/p\/JrzXrMqUln\/",' .
+                '"annotations":[{"type":"link\/external",' .
+                '"range":{"start":26,"end":57},' .
+                '"data":{"title":"http:\/\/instagr.am\/p\/JrzXrMqUln\/"}}]},' .
+                '"attributes":null}]}'
+            );
+    }
+
     public function testOnlyText()
     {
         $mw = HtmlConverter::from('Geek or Nerd @Apple Store');
