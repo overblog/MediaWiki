@@ -2,12 +2,14 @@
 
 namespace Overblog\MediaWiki\Converter;
 
+use Overblog\MediaWiki\Converter\Base;
+
 /**
  * Description of Range
  *
  * @author xavier
  */
-class Range
+class Range extends Base
 {
     /**
      * Start of the range

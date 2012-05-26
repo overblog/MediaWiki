@@ -2,12 +2,14 @@
 
 namespace Overblog\MediaWiki\Converter;
 
+use Overblog\MediaWiki\Converter\Base;
+
 /**
  * Description of Attribute
  *
  * @author xavier
  */
-class Attribute
+class Attribute extends Base
 {
     /**
      * Level of heading
@@ -16,12 +18,9 @@ class Attribute
     public $level;
 
     /**
-     * Instianciate a new Attribute
-     * @param int $level
+     * List style
+     * @var array
      */
-    public function __construct($level)
-    {
-        $this->level = $level;
-    }
+    public $styles = array();
 }
 

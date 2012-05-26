@@ -25,7 +25,7 @@ class Document
 
     /**
      * Add children to Document
-     * @param DocumentChildren $children
+     * @param mixed $children
      */
     public function addChildren(Children $children)
     {
@@ -50,6 +50,12 @@ class Document
      */
     public function asJson()
     {
+        // Clean childrens before json
+        foreach($this->children as $children)
+        {
+            $children->clean();
+        }
+
         return json_encode($this);
     }
 }

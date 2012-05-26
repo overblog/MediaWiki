@@ -4,6 +4,7 @@ namespace Overblog\MediaWiki\Converter;
 
 use Overblog\MediaWiki\Converter\Document;
 use Overblog\MediaWiki\Converter\Children;
+use Overblog\MediaWiki\Converter\ChildrenList;
 
 /**
  * Tool to convert HTML to MediaWiki
@@ -17,14 +18,16 @@ class HtmlConverter
      * @var array
      */
     private static $detectLeaf = array(
-        'p' => Children::PARAGRAPH,
-        'h1' => Children::HEADING,
-        'h2' => Children::HEADING,
-        'h3' => Children::HEADING,
-        'h4' => Children::HEADING,
-        'h5' => Children::HEADING,
-        'h6' => Children::HEADING,
-        'pre' => Children::PRE
+        'p' => Children::L_PARAGRAPH,
+        'h1' => Children::L_HEADING,
+        'h2' => Children::L_HEADING,
+        'h3' => Children::L_HEADING,
+        'h4' => Children::L_HEADING,
+        'h5' => Children::L_HEADING,
+        'h6' => Children::L_HEADING,
+        'pre' => Children::L_PRE,
+        'ol' => Children::L_LIST,
+        'ul' => Children::L_LIST
     );
 
     /**
@@ -72,6 +75,7 @@ class HtmlConverter
         // Add missing tags
         $list[] = 'a';
         $list[] = 'br';
+        $list[] = 'li';
 
         $list = implode('>,<', $list);
         $list = preg_replace('#(.+)#', '<$1>', $list);
@@ -95,25 +99,29 @@ class HtmlConverter
 
         foreach($pgs as $p)
         {
-            $children = new Children(strip_tags($p['text']), $p['type'], $p['level']);
-
-            // Detect links
-            $links = self::detectLinks($p['text']);
-
-            foreach($links as $l)
+            if(!is_null($p['list']))
             {
-                $children->createLink($l['link'], $l['start'], $l['end']);
+                $liste = new Children(Children::L_LIST);
+
+                foreach($p['text'] as $list)
+                {
+                    $listItem = new Children($list['type']);
+                    $listItem->addChildrens($list['text']);
+
+                    if(!empty($p['list']))
+                    {
+                        $listItem->addStyle($p['list']);
+                    }
+
+                    $liste->addChildren($listItem);
+                }
+
+                $childrens[] = $liste;
             }
-
-            // Detect simple tag
-            $tags = self::detectTag($p['text']);
-
-            foreach($tags as $t)
+            else
             {
-                $children->createTag($t['tag'], $t['start'], $t['end']);
+                $childrens[] = self::buildChildren($p);
             }
-
-            $childrens[] = $children;
         }
 
         return $childrens;
@@ -146,20 +154,35 @@ class HtmlConverter
                     $level = $l[1];
                 }
 
-                $texts[] = array(
-                    'type' => constant('Overblog\MediaWiki\Converter\Children::' . $leaf),
-                    'text' => $m,
-                    'level' => $level
-                );
+                switch($leaf)
+                {
+                    case 'LIST':
+                        $texts[] = array(
+                            'type' => constant('Overblog\MediaWiki\Converter\Children::L_' . $leaf),
+                            'text' => self::detectList($m),
+                            'level' => null,
+                            'list' => (('ol' == $match[1][$k]) ? 'number' : 'bullet')
+                        );
+                        break;
+
+                    default :
+                        $texts[] = array(
+                            'type' => constant('Overblog\MediaWiki\Converter\Children::L_' . $leaf),
+                            'text' => $m,
+                            'level' => $level,
+                            'list' => null
+                        );
+                }
             }
         }
         else
         {
             // Paragraph by default
             $texts[] = array(
-                'type' => Children::PARAGRAPH,
+                'type' => Children::L_PARAGRAPH,
                 'text' => $text,
-                'level' => null
+                'level' => null,
+                'list' => null
             );
         }
 
@@ -241,5 +264,68 @@ class HtmlConverter
         }
 
         return $strongs;
+    }
+
+    /**
+     * Detect list and build structure
+     * @param string $text
+     * @return array
+     */
+    private static function detectList($text)
+    {
+        $list = array();
+
+        if(preg_match_all(
+                '#<li>(.+?)</li>#i',
+                $text,
+                $match
+            ))
+        {
+            foreach($match[0] as $k => $m)
+            {
+                $list[] = array(
+                    'type' => Children::L_LISTITEM,
+                    'text' => self::createStructure($match[1][$k]),
+                    'level' => null,
+                    'list' => null
+                );
+            }
+        }
+
+        return $list;
+    }
+
+    /**
+     * Build children object
+     * @param array $leaf
+     * @return Children
+     */
+    private static function buildChildren(array $leaf)
+    {
+        $children = new Children($leaf['type']);
+        $children->setText(strip_tags($leaf['text']));
+
+        if(!is_null($leaf['level']))
+        {
+            $children->setLevel($leaf['level']);
+        }
+
+        // Detect links
+        $links = self::detectLinks($leaf['text']);
+
+        foreach($links as $l)
+        {
+            $children->createLink($l['link'], $l['start'], $l['end']);
+        }
+
+        // Detect simple tag
+        $tags = self::detectTag($leaf['text']);
+
+        foreach($tags as $t)
+        {
+            $children->createTag($t['tag'], $t['start'], $t['end']);
+        }
+
+        return $children;
     }
 }

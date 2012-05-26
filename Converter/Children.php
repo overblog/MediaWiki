@@ -6,21 +6,24 @@ use Overblog\MediaWiki\Converter\Content;
 use Overblog\MediaWiki\Annotation as AnnotationRender;
 use Overblog\MediaWiki\Converter\Annotation;
 use Overblog\MediaWiki\Converter\Attribute;
+use Overblog\MediaWiki\Converter\Base;
 
 /**
  * Description of Children
  *
  * @author xavier
  */
-class Children
+class Children extends Base
 {
     const STRONG = 'STRONG';
     const EMPHASIZE = 'EMPHASIZE';
     const DEL = 'DEL';
 
-    const PARAGRAPH = 'paragraph';
-    const HEADING = 'heading';
-    const PRE = 'pre';
+    const L_PARAGRAPH = 'paragraph';
+    const L_HEADING = 'heading';
+    const L_PRE = 'pre';
+    const L_LIST = 'list';
+    const L_LISTITEM = 'listItem';
 
     /**
      * Children type
@@ -35,6 +38,12 @@ class Children
     public $content;
 
     /**
+     * Children of childre
+     * @var array
+     */
+    public $children = array();
+
+    /**
      * Attribute
      * @var type
      */
@@ -46,14 +55,38 @@ class Children
      * @param string $type
      * @param int $level
      */
-    public function __construct($text, $type = self::PARAGRAPH, $level = null)
+    public function __construct($type = self::PARAGRAPH)
     {
         $this->type = $type;
-        $this->content = new Content($text);
+    }
 
-        if(!is_null($level))
+    /**
+     * Set text
+     * @param string $text
+     */
+    public function setText($text)
+    {
+        $this->content = new Content($text);
+    }
+
+    /**
+     * Add children to Document
+     * @param mixed $children
+     */
+    public function addChildren(Children $children)
+    {
+        $this->children[] = $children;
+    }
+
+    /**
+     * Add childrens to Document
+     * @param array $childrens
+     */
+    public function addChildrens(array $childrens)
+    {
+        foreach($childrens as $children)
         {
-            $this->setAttributes($level);
+            $this->addChildren($children);
         }
     }
 
@@ -89,12 +122,36 @@ class Children
     }
 
     /**
+     * Init attribute property
+     */
+    protected function initAttribute()
+    {
+        if(is_null($this->attributes))
+        {
+            $this->attributes = new Attribute();
+        }
+    }
+
+    /**
      * Set attributes
      * @param int $level
      */
-    public function setAttributes($level)
+    public function setLevel($level)
     {
-        $this->attributes = new Attribute($level);
+        $this->initAttribute();
+
+        $this->attributes->level = $level;
+    }
+
+    /**
+     * Set attributes
+     * @param int $level
+     */
+    public function addStyle($style)
+    {
+        $this->initAttribute();
+
+        $this->attributes->styles[] = $style;
     }
 }
 

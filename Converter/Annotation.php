@@ -4,13 +4,14 @@ namespace Overblog\MediaWiki\Converter;
 
 use Overblog\MediaWiki\Converter\Range;
 use Overblog\MediaWiki\Converter\Data;
+use Overblog\MediaWiki\Converter\Base;
 
 /**
  * Description of Annotation
  *
  * @author xavier
  */
-class Annotation
+class Annotation extends Base
 {
     public $type;
     public $range;

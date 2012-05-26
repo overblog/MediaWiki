@@ -2,12 +2,14 @@
 
 namespace Overblog\MediaWiki\Converter;
 
+use Overblog\MediaWiki\Converter\Base;
+
 /**
  * Description of Data
  *
  * @author xavier
  */
-class Data
+class Data extends Base
 {
     /**
      * Title

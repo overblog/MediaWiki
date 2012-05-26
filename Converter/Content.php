@@ -3,13 +3,14 @@
 namespace Overblog\MediaWiki\Converter;
 
 use Overblog\MediaWiki\Converter\Annotation;
+use Overblog\MediaWiki\Converter\Base;
 
 /**
  * Description of Content
  *
  * @author xavier
  */
-class Content
+class Content extends Base
 {
     public $text;
     public $annotations = array();
