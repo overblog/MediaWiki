@@ -98,10 +98,10 @@ class BranchListTestCase extends \PHPUnit_Framework_TestCase
         $branch = new BranchList($json);
 
 		$this->assertEquals(
-            '<ol><li><p>C&#39;est cool</p></li>' .
-            '<li><p>C&#39;est beau</p></li>' .
+            '<ol><li><p>C&#039;est cool</p></li>' .
+            '<li><p>C&#039;est beau</p></li>' .
             '<li><p>Même très beau</p></li>' .
-            '<li><p>C&#39;est génial</p></li></ol>',
+            '<li><p>C&#039;est génial</p></li></ol>',
             $branch->render()
         );
 	}
@@ -155,8 +155,8 @@ class BranchListTestCase extends \PHPUnit_Framework_TestCase
         $branch = new BranchList($json);
 
 		$this->assertEquals(
-            '<ul><li><p>C&#39;est cool</p></li>' .
-            '<li><p>C&#39;est beau</p></li></ul>',
+            '<ul><li><p>C&#039;est cool</p></li>' .
+            '<li><p>C&#039;est beau</p></li></ul>',
             $branch->render()
         );
 	}
@@ -210,8 +210,8 @@ class BranchListTestCase extends \PHPUnit_Framework_TestCase
         $branch = new BranchList($json);
 
 		$this->assertEquals(
-            '<ol><li><p>C&#39;est cool</p></li></ol>' .
-            '<ul><li><p>C&#39;est beau</p></li></ul>',
+            '<ol><li><p>C&#039;est cool</p></li></ol>' .
+            '<ul><li><p>C&#039;est beau</p></li></ul>',
             $branch->render()
         );
 	}
@@ -265,8 +265,8 @@ class BranchListTestCase extends \PHPUnit_Framework_TestCase
         $branch = new BranchList($json);
 
 		$this->assertEquals(
-            '<ul><li><p>C&#39;est cool</p></li>' .
-            '<li><ul><li><p>C&#39;est beau</p></li></ul></li></ul>',
+            '<ul><li><p>C&#039;est cool</p></li>' .
+            '<li><ul><li><p>C&#039;est beau</p></li></ul></li></ul>',
             $branch->render()
         );
 	}
@@ -325,8 +325,8 @@ class BranchListTestCase extends \PHPUnit_Framework_TestCase
         $branch = new BranchList($json);
 
 		$this->assertEquals(
-            '<ul><li><ul><li><p>C&#39;est beau</p></li></ul></li>' .
-            '<li><p>C&#39;est cool</p></li></ul>',
+            '<ul><li><ul><li><p>C&#039;est beau</p></li></ul></li>' .
+            '<li><p>C&#039;est cool</p></li></ul>',
             $branch->render()
         );
 	}

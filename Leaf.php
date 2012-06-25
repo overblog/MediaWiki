@@ -62,7 +62,7 @@ abstract class Leaf
       'QUOTE' => array(
         'original' => '\'',
         'replacement' => '⧘',
-        'entities'    => '&#39;'
+        'entities'    => '&#039;'
       ),
       'DOUBLE_QUOTE' => array(
         'original' => '"',
@@ -177,20 +177,39 @@ abstract class Leaf
         }
 
         // génération du vrai texte
-        $text = '';
-
-        $textTransformed = $this->_encodeText($this->_text);
-
-        $mb_text = preg_split(
-            '/(?<!^)(?!$)/u', $textTransformed
-        );
-        $strlen  = count($mb_text);
-
-        for ($i = 0 ; $i < $strlen ; $i++)
+        if(count($list) > 0)
         {
-            if (isset($list[$i]))
+            $text = '';
+
+            $textTransformed = $this->_encodeText($this->_text);
+
+            $mb_text = preg_split(
+                '/(?<!^)(?!$)/u', $textTransformed
+            );
+            $strlen  = count($mb_text);
+
+            for ($i = 0 ; $i < $strlen ; $i++)
             {
-                foreach ($list[$i] as $ann)
+                if (isset($list[$i]))
+                {
+                    foreach ($list[$i] as $ann)
+                    {
+                        $text .=
+                            Annotation::getTag(
+                                $ann['type'],
+                                $ann['begin'],
+                                $ann['data']
+                            );
+                    }
+                }
+                $text .= $mb_text[$i];
+            }
+
+            // fin de chaine
+
+            if (isset($list[$strlen]))
+            {
+                foreach ($list[$strlen] as $ann)
                 {
                     $text .=
                         Annotation::getTag(
@@ -200,25 +219,14 @@ abstract class Leaf
                         );
                 }
             }
-            $text .= $mb_text[$i];
+
+            $text = $this->_entitiesText($text);
         }
-
-        // fin de chaine
-
-        if (isset($list[$strlen]))
+        else
         {
-            foreach ($list[$strlen] as $ann)
-            {
-                $text .=
-                    Annotation::getTag(
-                        $ann['type'],
-                        $ann['begin'],
-                        $ann['data']
-                    );
-            }
+            $text = htmlspecialchars($this->_text, ENT_QUOTES, 'UTF-8');
         }
 
-        $text = $this->_entitiesText($text);
         return $text;
     }
 }

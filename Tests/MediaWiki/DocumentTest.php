@@ -274,13 +274,13 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
             '<h4>Ceci est saoul titre</h4>' .
             '<p>Et voilà enfin un paragraphe. Ouf. Il était <b>temps</b>.</p>' .
             '<p>Listons les points positifs :</p>' .
-            '<ol><li><p>C&#39;est cool</p></li>' .
-            '<li><p>C&#39;est beau</p></li>' .
+            '<ol><li><p>C&#039;est cool</p></li>' .
+            '<li><p>C&#039;est beau</p></li>' .
             '<li><ol><li><p>Même très beau</p></li></ol></li>' .
-            '<li><p>C&#39;est génial</p></li></ol>' .
+            '<li><p>C&#039;est génial</p></li></ol>' .
             '<p>On pourra aussi noter que :</p>' .
-            '<ul><li><p>C&#39;est cool</p></li>' .
-            '<li><p>C&#39;est beau</p></li></ul>' .
+            '<ul><li><p>C&#039;est cool</p></li>' .
+            '<li><p>C&#039;est beau</p></li></ul>' .
             '<p>Nous conclurons avec cet exemple :</p>' .
             '<pre><b>E</b> = MC2</pre>',
             $doc->render()
