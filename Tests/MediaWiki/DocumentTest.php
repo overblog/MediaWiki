@@ -41,6 +41,19 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
         );
 	}
 
+    public function testRenderEmptyParagraph()
+    {
+        $json = json_decode('{"type":"document","children":[{"type":"paragraph","content":{"text":""}}]}');
+
+        $doc = new Document($json);
+
+        $this->assertEquals(
+            '<p></p>'
+            ,
+            $doc->render()
+        );
+    }
+
 	public function testRender2()
 	{
         $json =

@@ -265,4 +265,17 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
                         '{"type":"paragraph","content":{"text":"Ligne 3"}}],' .
                             '"attributes":{"styles":["bullet"]}}]}]}');
     }
+
+    public function testEmptyParagraph()
+    {
+        $mw = HtmlConverter::from('<p></p>');
+
+        $this->assertInstanceOf(
+                'Overblog\MediaWiki\Converter\Document', $mw);
+
+        $this->assertEquals(
+                $mw->asJson(),
+                '{"type":"document","children":[{"type":"paragraph",' .
+                '"content":{"text":""}}]}');
+    }
 }
