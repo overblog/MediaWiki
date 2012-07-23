@@ -25,7 +25,7 @@ class LeafHeadingTestCase extends \PHPUnit_Framework_TestCase
 
         $leaf = new LeafHeading($leafJson);
 
-		$this->assertEquals('<h2>BLA BLO BLU</h2>', $leaf->render());
+		$this->assertEquals('<h3>BLA BLO BLU</h3>', $leaf->render());
 	}
 
 	public function testRender2()
@@ -51,7 +51,7 @@ class LeafHeadingTestCase extends \PHPUnit_Framework_TestCase
 
         $leaf = new LeafHeading($leafJson);
 
-		$this->assertEquals('<h3><b>BLA </b>BLO BLU</h3>', $leaf->render());
+		$this->assertEquals('<h4><b>BLA </b>BLO BLU</h4>', $leaf->render());
 	}
 
 
@@ -68,7 +68,7 @@ class LeafHeadingTestCase extends \PHPUnit_Framework_TestCase
         $leaf = new LeafHeading($leafJson);
 
 		$this->assertEquals(
-            '<h4><a href="http://www.google.fr">Lions</a></h4>',
+            '<h5><a href="http://www.google.fr">Lions</a></h5>',
             $leaf->render()
         );
     }

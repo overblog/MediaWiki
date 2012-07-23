@@ -27,7 +27,7 @@ class LeafHeading extends Leaf
 {
     public function render()
     {
-        $level = $this->_attributes->level + 1;
+        $level = $this->_attributes->level + 2;
 
         return
             '<h' . $level . '>' .

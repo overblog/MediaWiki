@@ -31,9 +31,9 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
         $doc = new Document($json);
 
         $this->assertEquals(
-            '<h2>Ceci <i>est</i> un <b>titre</b></h2>' .
-                '<h3>Ceci est un sous titre</h3>' .
-                '<h4>Ceci est saoul titre</h4>' .
+            '<h3>Ceci <i>est</i> un <b>titre</b></h3>' .
+                '<h4>Ceci est un sous titre</h4>' .
+                '<h5>Ceci est saoul titre</h5>' .
                 '<p>Et vo<b>ilà e</b>nfin un paragraphe. Ouf. Il était temps.</p>' .
                 '<p>Eh ouais !</p>'
             ,
@@ -282,9 +282,9 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
             );
         $doc = new Document($json);
 		$this->assertEquals(
-            '<h2>Ceci <i>est</i> un <b>titre</b></h2>' .
-            '<h3>Ceci est un sous titre</h3>' .
-            '<h4>Ceci est saoul titre</h4>' .
+            '<h3>Ceci <i>est</i> un <b>titre</b></h3>' .
+            '<h4>Ceci est un sous titre</h4>' .
+            '<h5>Ceci est saoul titre</h5>' .
             '<p>Et voilà enfin un paragraphe. Ouf. Il était <b>temps</b>.</p>' .
             '<p>Listons les points positifs :</p>' .
             '<ol><li><p>C&#039;est cool</p></li>' .
