@@ -114,7 +114,7 @@ class LeafParagraphTestCase extends \PHPUnit_Framework_TestCase
      *@group glou
      */
 
-      public function testRenderWithUTF8()
+    public function testRenderWithUTF8()
     {
         $leafJson =
             json_decode(
@@ -127,6 +127,23 @@ class LeafParagraphTestCase extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             '<p>Voi<b>là </b>voilà</p>',
+            $leaf->render()
+        );
+    }
+
+    public function testRenderWithUTF8WithHtml()
+    {
+        $leafJson =
+            json_decode(
+                '{"type":"paragraph","content":{"text":"Voilà <b>voilà</b>",' .
+                '"annotations"' .
+                ':[{"type":"textStyle/bold","range":{"start":3,"end":6}}]}}'
+            );
+
+        $leaf = new LeafParagraph($leafJson);
+
+        $this->assertEquals(
+            '<p>Voi<b>là </b>&lt;b&gt;voilà&lt;/b&gt;</p>',
             $leaf->render()
         );
     }

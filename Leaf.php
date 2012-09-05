@@ -146,21 +146,7 @@ abstract class Leaf
         // creation order for annotation
         foreach ($this->_annotations as $i => $a)
         {
-            // begin
-
-            if (! isset($list[$a->range->start]))
-            {
-                $list[$a->range->start] = array();
-            }
-
-            $list[$a->range->start][] =
-                array(
-                    'type'  => $a->type,
-                    'begin' => true,
-                    'data'  => (isset($a->data) ? $a->data : null)
-                );
-
-            // end
+            // end - Must be set first because we close before open tags
 
             if (! isset($list[$a->range->end]))
             {
@@ -174,50 +160,50 @@ abstract class Leaf
                     'data'  => null
                 );
 
+            // begin
+
+            if (! isset($list[$a->range->start]))
+            {
+                $list[$a->range->start] = array();
+            }
+
+            $list[$a->range->start][] =
+                array(
+                    'type'  => $a->type,
+                    'begin' => true,
+                    'data'  => (isset($a->data) ? $a->data : null)
+                );
         }
+
+        ksort($list);
 
         // génération du vrai texte
         if(count($list) > 0)
         {
-            $text = '';
+            $length = 0;
 
-            $textTransformed = $this->_encodeText($this->_text);
+            $text = $this->_encodeText($this->_text);
 
-            $mb_text = preg_split(
-                '/(?<!^)(?!$)/u', $textTransformed
-            );
-            $strlen  = count($mb_text);
-
-            for ($i = 0 ; $i < $strlen ; $i++)
+            foreach ($list as $char => $annotations)
             {
-                if (isset($list[$i]))
-                {
-                    foreach ($list[$i] as $ann)
-                    {
-                        $text .=
-                            Annotation::getTag(
-                                $ann['type'],
-                                $ann['begin'],
-                                $ann['data']
-                            );
-                    }
-                }
-                $text .= $mb_text[$i];
-            }
+                $replace = null;
+                $pos = $char + $length;
 
-            // fin de chaine
-
-            if (isset($list[$strlen]))
-            {
-                foreach ($list[$strlen] as $ann)
+                foreach($annotations as $ann)
                 {
-                    $text .=
-                        Annotation::getTag(
-                            $ann['type'],
-                            $ann['begin'],
-                            $ann['data']
-                        );
+                    $replace.= Annotation::getTag(
+                               $ann['type'],
+                               $ann['begin'],
+                               $ann['data']
+                           );
                 }
+
+                $len = mb_strlen($replace);
+
+                $text = mb_substr($text, 0, $pos) . $replace .
+                        mb_substr($text, $pos);
+
+                $length+= $len;
             }
 
             $text = $this->_entitiesText($text);
