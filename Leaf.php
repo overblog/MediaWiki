@@ -198,12 +198,10 @@ abstract class Leaf
                            );
                 }
 
-                $len = mb_strlen($replace);
-
                 $text = mb_substr($text, 0, $pos) . $replace .
                         mb_substr($text, $pos);
 
-                $length+= $len;
+                $length+= mb_strlen($replace);
             }
 
             $text = $this->_entitiesText($text);
