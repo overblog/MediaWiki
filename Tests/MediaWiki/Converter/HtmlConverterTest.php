@@ -278,4 +278,47 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
                 '{"type":"document","children":[{"type":"paragraph",' .
                 '"content":{"text":""}}]}');
     }
+
+    /**
+     * Test that <b><i>...</i></b> is handled correctly
+     */
+
+    public function testDoubleTag()
+    {
+        $mw = HtmlConverter::from('<strong><em>Geek</em></strong>');
+
+        $this->assertInstanceOf('Overblog\MediaWiki\Converter\Document', $mw);
+
+        $this->assertEquals(
+                $mw->asJson(),
+                '{"type":"document","children":[{"type":"paragraph",' .
+                '"content":{"text":"Geek",' .
+                '"annotations":[{"type":"textStyle\/emphasize",' .
+                '"range":{"start":0,"end":4}},{' .
+                '"type":"textStyle\/strong","range":{"start":0,"end":4}' .
+                '}]}}]}');
+
+    }
+
+    /**
+     * Test that <b><i>...</i></b> is handled correctly
+     */
+
+    public function testDoubleTag2()
+    {
+        $mw = HtmlConverter::from('<em><strong>Geek</strong></em>');
+
+        $this->assertInstanceOf('Overblog\MediaWiki\Converter\Document', $mw);
+
+        $this->assertEquals(
+                $mw->asJson(),
+                '{"type":"document","children":[{"type":"paragraph",' .
+                '"content":{"text":"Geek",' .
+                '"annotations":[{"type":"textStyle\/strong",' .
+                '"range":{"start":0,"end":4}},{' .
+                '"type":"textStyle\/emphasize","range":{"start":0,"end":4}' .
+                '}]}}]}');
+
+    }
+
 }

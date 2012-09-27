@@ -17,44 +17,51 @@ class HtmlConverter
      * Leaf replacement
      * @var array
      */
-    private static $detectLeaf = array(
-        'p' => Children::L_PARAGRAPH,
-        'h1' => Children::L_HEADING,
-        'h2' => Children::L_HEADING,
-        'h3' => Children::L_HEADING,
-        'h4' => Children::L_HEADING,
-        'h5' => Children::L_HEADING,
-        'h6' => Children::L_HEADING,
-        'pre' => Children::L_PRE,
-        'ol' => Children::L_LIST,
-        'ul' => Children::L_LIST
-    );
+    private static $detectLeaf =
+        array(
+            'p'   => Children::L_PARAGRAPH,
+            'h1'  => Children::L_HEADING,
+            'h2'  => Children::L_HEADING,
+            'h3'  => Children::L_HEADING,
+            'h4'  => Children::L_HEADING,
+            'h5'  => Children::L_HEADING,
+            'h6'  => Children::L_HEADING,
+            'pre' => Children::L_PRE,
+            'ol'  => Children::L_LIST,
+            'ul'  => Children::L_LIST
+        );
 
     /**
      * Tags replacement
      * @var array
      */
-    private static $replaceTags = array(
-        'b' => Children::STRONG,
-        'strong' => Children::STRONG,
-        'em' => Children::EMPHASIZE,
-        'i' => Children::EMPHASIZE,
-        'del' => Children::DEL
-    );
+
+    private static $replaceTags =
+        array(
+            'b'      => Children::STRONG,
+            'strong' => Children::STRONG,
+            'em'     => Children::EMPHASIZE,
+            'i'      => Children::EMPHASIZE,
+            'del'    => Children::DEL
+        );
 
     /**
      * Create new Document from HTML
      * @param string $text
      */
+
     public static function from($text)
     {
         // Create objet
+
         $object = new Document();
 
         // Clean useless tags
+
         $text = self::stripTags($text);
 
         // Place line in structure
+
         $object->addChildrens(self::createStructure($text));
 
         return $object;
@@ -65,6 +72,7 @@ class HtmlConverter
      * @param type $text
      * @return type
      */
+
     private static function stripTags($text)
     {
         $list = array_merge(
@@ -90,16 +98,18 @@ class HtmlConverter
     private static function createStructure($text)
     {
         // Replace <br /> by a new line
+
         $text = self::replaceNewLine($text);
 
         $childrens = array();
 
         //Detect paragraph
+
         $pgs = self::detectLeaf($text);
 
         foreach($pgs as $p)
         {
-            if(!is_null($p['list']))
+            if (! is_null($p['list']))
             {
                 $liste = new Children(Children::L_LIST);
 
@@ -146,10 +156,13 @@ class HtmlConverter
         {
             foreach($match[2] as $k => $m)
             {
-                $leaf = strtoupper(self::$detectLeaf[strtolower($match[1][$k])]);
+                $leaf  =
+                    strtoupper(
+                        self::$detectLeaf[strtolower($match[1][$k])]
+                    );
                 $level = null;
 
-                if(preg_match('#^h([0-9])$#i', $match[1][$k], $l))
+                if (preg_match('#^h([0-9])$#i', $match[1][$k], $l))
                 {
                     $level = $l[1];
                 }
@@ -158,20 +171,37 @@ class HtmlConverter
                 {
                     case 'LIST':
                         $texts[] = array(
-                            'type' => constant('Overblog\MediaWiki\Converter\Children::L_' . $leaf),
+                            'type' =>
+                                constant(
+                                    'Overblog\MediaWiki\Converter\Children::L_'
+                                        . $leaf
+                                ),
                             'text' => self::detectList($m),
                             'level' => null,
-                            'list' => (('ol' == $match[1][$k]) ? 'number' : 'bullet')
+                            'list' =>
+                                (
+                                    ('ol' == $match[1][$k])
+                                        ?
+                                        'number'
+                                        :
+                                        'bullet'
+                                )
                         );
                         break;
 
                     default :
-                        $texts[] = array(
-                            'type' => constant('Overblog\MediaWiki\Converter\Children::L_' . $leaf),
-                            'text' => $m,
-                            'level' => $level,
-                            'list' => null
-                        );
+                        $texts[] =
+                            array(
+                                'type'  =>
+                                    constant(
+                                        'Overblog\MediaWiki\Converter' .
+                                            '\Children::L_' .
+                                            $leaf
+                                    ),
+                                'text'  => $m,
+                                'level' => $level,
+                                'list'  => null
+                            );
                 }
             }
         }
@@ -237,33 +267,49 @@ class HtmlConverter
      */
     private static function detectTag($text)
     {
-        $strongs = array();
-        $cleanText = strip_tags($text);
-
+        $tags       = array();
+        $cleanText  = strip_tags($text);
         $tagsSearch = implode('|', array_keys(self::$replaceTags));
 
-        if(preg_match_all(
-                sprintf('#<(%s)>(.+?)</(?:%1$s)>#i', $tagsSearch),
+
+        if(
+            preg_match_all(
+                sprintf('#<(%s)[^>]*>(.+?)</\1>#i', $tagsSearch),
                 $text,
                 $match)
             )
         {
             foreach($match[0] as $k => $m)
             {
-                //We get the position of the link in strip tags string
-                $needle = strip_tags($match[2][$k]);
-                $pos = mb_strpos($cleanText, $needle, 0, 'UTF-8');
-                $tag = self::$replaceTags[strtolower($match[1][$k])];
+                // We get the position of the link in strip tags string
 
-                $strongs[] = array(
-                    'tag' => constant('Overblog\MediaWiki\Converter\Children::' . $tag),
-                    'start' => $pos,
-                    'end' => $pos + mb_strlen($needle, 'UTF-8')
-                );
+                $needle = $match[2][$k];
+
+                $subTags = self::detectTag($needle);
+
+                if (count($subTags) > 0)
+                {
+                    $tags = array_merge($tags, $subTags);
+                }
+
+                $needle = strip_tags($match[2][$k]);
+                $pos    = mb_strpos($cleanText, $needle, 0, 'UTF-8');
+                $tag    = self::$replaceTags[strtolower($match[1][$k])];
+
+                $tags[] =
+                    array(
+                        'tag'   =>
+                            constant(
+                                'Overblog\MediaWiki\Converter\Children::' .
+                                    $tag
+                            ),
+                        'start' => $pos,
+                        'end'   => $pos + mb_strlen($needle, 'UTF-8')
+                    );
             }
         }
 
-        return $strongs;
+        return $tags;
     }
 
     /**
@@ -319,6 +365,7 @@ class HtmlConverter
         }
 
         // Detect simple tag
+
         $tags = self::detectTag($leaf['text']);
 
         foreach($tags as $t)
