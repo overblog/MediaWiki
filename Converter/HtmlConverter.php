@@ -58,7 +58,11 @@ class HtmlConverter
 
         // Clean useless tags
 
-        $text = self::stripTags($text);
+        $text =
+            htmlspecialchars_decode(
+                self::stripTags($text),
+                ENT_QUOTES | ENT_COMPAT | ENT_HTML401
+            );
 
         // Place line in structure
 
