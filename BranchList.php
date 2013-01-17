@@ -52,7 +52,7 @@ class BranchList extends Branch
                 foreach ($data->children as $c)
                 {
                     // Détermination du type de la première liste
-                    if(!isset($c->attributes))
+                    if(!isset($c->attributes) or !isset($c->attributes->styles))
                     {
                         $c->attributes = new \StdClass();
                         $c->attributes->styles = array();
