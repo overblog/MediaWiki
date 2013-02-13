@@ -299,4 +299,98 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
             $doc->render()
         );
     }
+
+    public function testRenderWithAnnotations()
+   	{
+           $json =
+               json_decode('
+                   {
+                     "type":"document",
+                     "children":
+                     [
+                       {
+                         "type":"paragraph",
+                         "content":
+                         {
+                           "text":"Eh ouais !",
+                           "annotations":
+                           [
+                             {
+                               "type":"textStyle\/bold",
+                               "range":{
+                                 "start":0,
+                                 "end":1
+                               }
+                             },
+                             {
+                               "type":"link\/internal",
+                               "data":{
+                                 "link":"http://coin.com",
+                                 "popup":true
+                               },
+                               "range":{
+                                   "start":3,
+                                   "end":4
+                               }
+                             }
+                           ]
+                         }
+                       }
+                     ]
+                   }'
+               );
+
+           $doc = new Document($json);
+
+           $this->assertEquals(
+               '<p><b>E</b>h <a href="http://coin.com" ' .
+                    'class="popup">o</a>uais !</p>',
+               $doc->render()
+           );
+
+           // TU issu du JS
+
+           $json =
+               json_decode(
+                   '{"type":"document","children":[{"type":"paragraph","content":{"text":"popuptoono","annotations":[{"type":"link/external","range":{"start":0,"end":5},"data":{"title":"http://link1","popup":true}},{"type":"link/external","range":{"start":5,"end":8},"data":{"link":"http://link2","popup":true}},{"type":"link/external","range":{"start":8,"end":10},"data":{"link":"http://link3"}}]}}]}'
+               );
+
+           $doc = new Document($json);
+
+           $this->assertEquals(
+               '<p><a href="http://link1" class="popup">popup</a><a href="http://link2" class="popup">too</a><a href="http://link3">no</a></p>',
+               $doc->render()
+           );
+   	}
+
+    public function testListWithTextInsideListItems()
+    {
+        $json =
+            json_decode(
+                    '{"type":"document","children":[{"type":"list","content":{"text":""},"children":[{"type":"listItem","content":{"text":"this"},"children":[{"type":"list","content":{"text":""},"children":[{"type":"listItem","content":{"text":"is"},"children":[{"type":"list","content":{"text":""},"children":[{"type":"listItem","content":{"text":"a"},"children":[{"type":"list","content":{"text":""},"children":[{"type":"listItem","content":{"text":"test"},"attributes":{"styles":["bullet"]}}]}],"attributes":{"styles":["number"]}}]}],"attributes":{"styles":["bullet"]}}]}],"attributes":{"styles":["number"]}}]},{"type":"paragraph","content":{"text":"Yeah !"}}]}'
+            );
+
+        $doc = new Document($json);
+
+        $this->assertEquals(
+            '<ol>' .
+                '<li>this' .
+                '<ul>' .
+                    '<li>is' .
+                    '<ol>' .
+                        '<li>a' .
+                        '<ul>' .
+                            '<li>test</li>' .
+                        '</ul>' .
+                        '</li>' .
+                    '</ol>' .
+                    '</li>' .
+                '</ul>' .
+                '</li>' .
+            '</ol>' .
+            '<p>Yeah !</p>',
+            $doc->render()
+        );
+    }
+
 }

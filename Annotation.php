@@ -1,7 +1,5 @@
 <?php
 
-namespace Overblog\MediaWiki;
-
 /**
  * File Node
  *
@@ -10,6 +8,8 @@ namespace Overblog\MediaWiki;
  * @version    1.0
  * @author     Yannick Le Guédart
  */
+
+namespace Overblog\MediaWiki;
 
 /**
  * Class Node
@@ -35,6 +35,10 @@ class Annotation
     const LINK_INTERNAL = 'link/internal';
     const LINK_EXTERNAL = 'link/external';
 
+    /**
+     * @var array List of valid wikidom tags and their HTML equivalents
+     */
+
     static protected $_tags =
         array(
             self::BOLD          => 'b',
@@ -50,22 +54,40 @@ class Annotation
             self::LINK_EXTERNAL => 'a',
         );
 
+    /**
+     * @var array liste des conversion Wikidom => html
+     */
+
     static protected $_data2attribute =
-        array(
+        [
             self::LINK_INTERNAL =>
-                array(
-                    'title' => 'href'
-                ),
+                [
+                    'link'  => 'href="%s"',
+                    'title' => 'href="%s"',
+                    'popup' => 'class="popup"'
+                ],
             self::LINK_EXTERNAL =>
-                array(
-                    'title' => 'href'
-                )
-        );
+                [
+                    'link'  => 'href="%s"',
+                    'title' => 'href="%s"',
+                    'popup' => 'class="popup"'
+                ]
+        ];
+
+    /**
+     * Generate the html tag (begin or end) from the annotation
+     *
+     * @param string $type  tag type (@see self::$_tags)
+     * @param bool   $begin whether it's the tag start or end
+     * @param array  $data  array of special attributes
+     *
+     * @return string
+     */
 
     static public function getTag(
         $type,
         $begin = true,
-        $data = null)
+        $data  = null)
     {
         $tag = '<' . (($begin === false) ? '/' : '') . self::$_tags[$type];
 
@@ -75,8 +97,10 @@ class Annotation
             {
                 $tag .=
                     ' ' .
-                    self::$_data2attribute[$type][$k] .
-                        '="' . addslashes($v) . '"';
+                    sprintf(
+                        self::$_data2attribute[$type][$k],
+                        addslashes($v)
+                    );
             }
         }
 

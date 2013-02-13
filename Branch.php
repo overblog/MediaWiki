@@ -11,6 +11,8 @@ namespace Overblog\MediaWiki;
  * @author     Yannick Le Guédart
  */
 
+use Overblog\MediaWiki\LeafSimple;
+
 /**
  * Class Branch
  *
@@ -28,6 +30,12 @@ class Branch
      */
 
     protected $_nodes = array();
+
+    /**
+     * @var string Content of the list item
+     */
+
+    protected $_content = null;
 
     /**
      * attributes
@@ -57,6 +65,11 @@ class Branch
                 }
             }
 
+            if (isset($data->content))
+            {
+                $this->_content = new LeafSimple($data);
+            }
+
             if (isset($data->attributes))
             {
                 $this->_attributes = $data->attributes;
@@ -67,6 +80,11 @@ class Branch
     public function render()
     {
         $text = '';
+
+        if (! is_null($this->_content))
+        {
+            $text .= $this->_content->render();
+        }
 
         foreach ($this->_nodes as $n)
         {
