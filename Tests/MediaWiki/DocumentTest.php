@@ -393,4 +393,18 @@ class DocumentTestCase extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testTwoLinksWithSpaceInTheMiddle()
+    {
+        $json =
+            json_decode(
+                '{"type":"document","children":[{"type":"paragraph","content":{"text":"un lien sans popup","annotations":[{"type":"link/external","range":{"start":0,"end":7},"data":{"link":"http://google.com","popup":true}},{"type":"link/external","range":{"start":8,"end":18},"data":{"link":"http://overblog.com"}}]}}]}'
+            );
+
+        $doc = new Document($json);
+
+        $this->assertEquals(
+            '<p><a href="http://google.com" class="popup">un lien</a> <a href="http://overblog.com">sans popup</a></p>',
+            $doc->render()
+        );
+    }
 }
