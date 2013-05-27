@@ -229,7 +229,7 @@ class HtmlConverter
      */
     private static function replaceNewLine($text)
     {
-        return preg_replace('#<br[ ]*/?>#i', '\n', $text);
+        return preg_replace('#<br[ ]*/?>#i', "\n", $text);
     }
 
     /**

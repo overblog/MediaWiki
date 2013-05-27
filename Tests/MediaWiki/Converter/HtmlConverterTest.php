@@ -77,7 +77,7 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
                 $mw->asJson(),
                 '{"type":"document","children":[{"type":"paragraph",' .
-                '"content":{"text":"Geek or Nerd \\\n@Apple Store"}}]}'
+                '"content":{"text":"Geek or Nerd \\n@Apple Store"}}]}'
             );
     }
 
