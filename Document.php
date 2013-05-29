@@ -69,6 +69,6 @@ class Document
             $text .= $n->render();
         }
 
-        return $text;
+        return nl2br($text);
     }
 }
