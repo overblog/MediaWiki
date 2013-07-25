@@ -109,4 +109,22 @@ class LeafPreTestCase extends \PHPUnit_Framework_TestCase
             $leaf->render()
         );
     }
+
+    public function testRenderWithNewline()
+    {
+        $leafJson =
+            json_decode(
+                '{' .
+                    '"type":"pre",' .
+                    '"content":{' .
+                        '"text":"\\nBLA BLO BLU"' .
+                    '}' .
+                '}'
+            );
+
+        $leaf = new LeafPre($leafJson);
+
+        $this->assertEquals("<pre>\nBLA BLO BLU</pre>", $leaf->render());
+    }
+
 }
