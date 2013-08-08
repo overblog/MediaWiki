@@ -153,7 +153,7 @@ class HtmlConverter
         $leafSearch = implode('|', array_keys(self::$detectLeaf));
 
         if(preg_match_all(
-                sprintf('#<(%s)>(.+?)</(?:%1$s)>#i', $leafSearch),
+                sprintf('#<(%s)>(.+?)</(?:%1$s)>#si', $leafSearch),
                 $text,
                 $match
             ))

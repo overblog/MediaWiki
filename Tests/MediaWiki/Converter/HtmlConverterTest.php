@@ -321,4 +321,20 @@ class HtmlConverterTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    public function testBlocWithBr()
+    {
+        $mw = HtmlConverter::from("<pre>l'amour est dans le pre</pre>" .
+                                  "<p>Hhhhhhhhhghhh</p><h1>Nhbnnnbgv</h1>" .
+                                  "<pre>Nhjjjjj<br>Bhjjkk<br>Jjjh</pre>");
+
+        $this->assertInstanceOf('Overblog\MediaWiki\Converter\Document', $mw);
+
+        $this->assertEquals(
+                $mw->asJson(),
+                '{"type":"document","children":[{"type":"pre","content":' .
+                '{"text":"l\'amour est dans le pre"}},{"type":"paragraph"' .
+                ',"content":{"text":"Hhhhhhhhhghhh"}},{"type":"heading",' .
+                '"content":{"text":"Nhbnnnbgv"},"attributes":{"level":"1"}},' .
+                '{"type":"pre","content":{"text":"Nhjjjjj\nBhjjkk\nJjjh"}}]}');
+    }
 }
