@@ -66,9 +66,16 @@ class Document
 
         foreach ($this->_nodes as $n)
         {
-            $text .= $n->render();
+            if ('Overblog\MediaWiki\LeafPre' === get_class($n))
+            {
+                $text .= $n->render();
+            }
+            else
+            {
+                $text .= nl2br($n->render());
+            }
         }
 
-        return nl2br($text);
+        return $text;
     }
 }
