@@ -1,7 +1,7 @@
 {
     "name": "overblog/mediawiki",
     "description": "OverBlog MediaWiki",
-    "homepage": "https://github.com/ebuzzing/OverblogMediaWiki.git",
+    "homepage": "https://github.com/overblog/MediaWiki.git",
     "type": "library",
     "authors": [
         {
